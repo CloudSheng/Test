@@ -123,13 +123,13 @@ Public Class Form80
         Ws = xWorkBook.Sheets(1)
         Ws.Activate()
         AdjustExcelFormat()
-        oCommand.CommandText = "select ccc01,type,ima02,ima021"
+        oCommand.CommandText = "select ccc01,type,ima02,ima021,ima06, ima08, ima25"
         For i As Int16 = 1 To TotalPeriod Step 1
             oCommand.CommandText += ",sum(t" & i & ") as t" & i
         Next
         oCommand.CommandText += " from ( "
         If CheckBox1.Checked = True Then
-            oCommand.CommandText += "select ccc01,'1' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'1' as type,ima02,ima021,ima06,ima08,ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -162,7 +162,7 @@ Public Class Form80
             If CheckBox1.Checked = True Then
                 oCommand.CommandText += "union all "
             End If
-            oCommand.CommandText += "select ccc01,'2' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'2' as type,ima02,ima021,ima06, ima08, ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -195,7 +195,7 @@ Public Class Form80
             If CheckBox1.Checked = True Or CheckBox2.Checked = True Then
                 oCommand.CommandText += "union all "
             End If
-            oCommand.CommandText += "select ccc01,'3' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'3' as type,ima02,ima021,ima06, ima08, ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -228,7 +228,7 @@ Public Class Form80
             If CheckBox1.Checked = True Or CheckBox2.Checked = True Then
                 oCommand.CommandText += "union all "
             End If
-            oCommand.CommandText += "select ccc01,'4' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'4' as type,ima02,ima021,ima06, ima08, ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -261,7 +261,7 @@ Public Class Form80
             If CheckBox1.Checked = True Or CheckBox2.Checked = True Then
                 oCommand.CommandText += "union all "
             End If
-            oCommand.CommandText += "select ccc01,'5' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'5' as type,ima02,ima021,ima06, ima08, ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -294,7 +294,7 @@ Public Class Form80
             If CheckBox1.Checked = True Or CheckBox2.Checked = True Or CheckBox3.Checked = True Then
                 oCommand.CommandText += "union all "
             End If
-            oCommand.CommandText += "select ccc01,'6' as type,ima02,ima021"
+            oCommand.CommandText += "select ccc01,'6' as type,ima02,ima021,ima06, ima08, ima25"
             For i As Int16 = 1 To TotalPeriod Step 1
                 Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
                 Dim CT As String = String.Empty
@@ -323,7 +323,7 @@ Public Class Form80
                 oCommand.CommandText += " AND ima06 = '" & l_ima06 & "' "
             End If
         End If
-        oCommand.CommandText += " ) group by ccc01,type,ima02,ima021 order by ccc01,type "
+        oCommand.CommandText += " ) group by ccc01,type,ima02,ima021,ima06, ima08, ima25 order by ccc01,type "
         oReader = oCommand.ExecuteReader()
         Dim TR As Decimal = 0
         If oReader.HasRows Then
@@ -331,22 +331,25 @@ Public Class Form80
                 Ws.Cells(LineZ, 1) = oReader.Item("ccc01")
                 Ws.Cells(LineZ, 2) = oReader.Item("ima02")
                 Ws.Cells(LineZ, 3) = oReader.Item("ima021")
+                Ws.Cells(LineZ, 4) = oReader.Item("ima06")
+                Ws.Cells(LineZ, 5) = oReader.Item("ima08")
+                Ws.Cells(LineZ, 6) = oReader.Item("ima25")
                 Select Case oReader.Item("type")
                     Case 1
-                        Ws.Cells(LineZ, 4) = "Material 材料"
+                        Ws.Cells(LineZ, 7) = "Material 材料"
                     Case 2
-                        Ws.Cells(LineZ, 4) = "DL人工"
+                        Ws.Cells(LineZ, 7) = "DL人工"
                     Case 3
-                        Ws.Cells(LineZ, 4) = "OVH制费一"
+                        Ws.Cells(LineZ, 7) = "OVH制费一"
                     Case 4
-                        Ws.Cells(LineZ, 4) = "OVH制费二"
+                        Ws.Cells(LineZ, 7) = "OVH制费二"
                     Case 5
-                        Ws.Cells(LineZ, 4) = "Work outsouce加工"
+                        Ws.Cells(LineZ, 7) = "Work outsouce加工"
                     Case 6
-                        Ws.Cells(LineZ, 4) = "Total合计"
+                        Ws.Cells(LineZ, 7) = "Total合计"
                 End Select
                 For i As Int16 = 1 To TotalPeriod Step 1
-                    Ws.Cells(LineZ, 4 + i) = oReader.Item(3 + i)
+                    Ws.Cells(LineZ, 7 + i) = oReader.Item(6 + i)
                 Next
                 LineZ += 1
                 TR += 1
@@ -361,20 +364,23 @@ Public Class Form80
         Ws.Cells(1, 1) = "Part no.料件编号"
         Ws.Cells(1, 2) = "Part_N 品名"
         Ws.Cells(1, 3) = "Spec.规格"
-        Ws.Cells(1, 4) = "Cost type成本资料"
+        Ws.Cells(1, 4) = "分群码"
+        Ws.Cells(1, 5) = "来源码"
+        Ws.Cells(1, 6) = "库存单位（币别：RMB)"
+        Ws.Cells(1, 7) = "Cost type成本资料"
         For i As Integer = 1 To TotalPeriod Step 1
             Dim TMonth As Int16 = Conversion.Int(Strings.Right(Start1, 2)) + i - 1
             If TMonth > 12 Then
                 If TMonth - 12 < 10 Then
-                    Ws.Cells(1, 4 + i) = Conversion.Int(Strings.Left(Start1, 4)) + 1 & "/0" & TMonth - 12
+                    Ws.Cells(1, 7 + i) = Conversion.Int(Strings.Left(Start1, 4)) + 1 & "/0" & TMonth - 12
                 Else
-                    Ws.Cells(1, 4 + i) = Conversion.Int(Strings.Left(Start1, 4)) + 1 & "/" & TMonth - 12
+                    Ws.Cells(1, 7 + i) = Conversion.Int(Strings.Left(Start1, 4)) + 1 & "/" & TMonth - 12
                 End If
             Else
                 If TMonth < 10 Then
-                    Ws.Cells(1, 4 + i) = Conversion.Int(Strings.Left(Start1, 4)) & "/0" & TMonth
+                    Ws.Cells(1, 7 + i) = Conversion.Int(Strings.Left(Start1, 4)) & "/0" & TMonth
                 Else
-                    Ws.Cells(1, 4 + i) = Conversion.Int(Strings.Left(Start1, 4)) & "/" & TMonth
+                    Ws.Cells(1, 7 + i) = Conversion.Int(Strings.Left(Start1, 4)) & "/" & TMonth
                 End If
             End If
         Next

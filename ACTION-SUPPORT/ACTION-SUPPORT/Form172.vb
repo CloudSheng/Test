@@ -93,6 +93,7 @@ Public Class Form172
         Me.ComboBox1.SelectedItem = "本周"
         Me.ComboBox2.SelectedItem = "2019"
         Me.ComboBox3.SelectedItem = "3"
+        Me.ComboBox4.SelectedItem = "按平面尺寸计算"
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
@@ -360,6 +361,9 @@ Public Class Form172
     Private Sub BackgroundWorker2_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker2.DoWork
         ExportToExcelR3()
     End Sub
+    Private Sub BackgroundWorker5_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker5.DoWork
+        ExportToExcelR3_1()
+    End Sub
     Private Sub ExportToExcelR2()
         xExcel = New Microsoft.Office.Interop.Excel.Application
         Dim xPath As String = "C:\temp\IER2_Template.xlsx"
@@ -402,6 +406,8 @@ Public Class Form172
         End If
         mSQLReader.Close()
     End Sub
+    
+
     Private Sub SaveExcelR2()
         SaveFileDialog1.FileName = "Achievement"
         SaveFileDialog1.DefaultExt = ".xlsx"
@@ -448,6 +454,29 @@ Public Class Form172
         Label3.Text = "R3已存檔"
         Label3.Refresh()
     End Sub
+    Private Sub SaveExcelR3_1()
+        SaveFileDialog1.FileName = "月出勤工时统计表"
+        SaveFileDialog1.DefaultExt = ".xlsx"
+        Dim SON As DialogResult = SaveFileDialog1.ShowDialog()
+        If SON = DialogResult.OK Then
+            Dim SFN As String = SaveFileDialog1.FileName
+            Ws.SaveAs(SFN, XlFileFormat.xlOpenXMLWorkbook)
+        Else
+            MsgBox("没有储存文件", MsgBoxStyle.Critical)
+        End If
+        xWorkBook.Saved = True
+        xWorkBook.Close()
+        xExcel.Quit()
+        If mConnection.State = ConnectionState.Open Then
+            Try
+                mConnection.Close()
+            Catch ex As Exception
+                MsgBox(ex.Message())
+            End Try
+        End If
+        Label3.Text = "R3_1已存檔"
+        Label3.Refresh()
+    End Sub
     Private Sub SaveExcelR4()
         SaveFileDialog1.FileName = "生产效率预测表"
         SaveFileDialog1.DefaultExt = ".xlsx"
@@ -476,6 +505,9 @@ Public Class Form172
     End Sub
     Private Sub BackgroundWorker2_RunWorkCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BackgroundWorker2.RunWorkerCompleted
         SaveExcelR3()
+    End Sub
+    Private Sub BackgroundWorker5_RunWorkCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BackgroundWorker5.RunWorkerCompleted
+        SaveExcelR3_1()
     End Sub
     Private Sub CountD23W1()
         mSQLS1.CommandText = "DELETE IED23 WHERE Section1 in (1, 2) AND Weekno between '" & StartWeek & "' AND '" & EndWeek & "'"
@@ -654,7 +686,109 @@ Public Class Form172
         oRng1.Select()
         oRng1.PasteSpecial(Microsoft.Office.Interop.Excel.XlPasteType.xlPasteValues, Microsoft.Office.Interop.Excel.XlPasteSpecialOperation.xlPasteSpecialOperationNone, False, True)
     End Sub
+    Private Sub ExportToExcelR3_1()
+        xExcel = New Microsoft.Office.Interop.Excel.Application
+        Dim xPath As String = "C:\temp\IER3.1_Template.xlsx"
+        If Not My.Computer.FileSystem.FileExists(xPath) Then
+            MsgBox("NO SAMPLE FILE")
+            Return
+        End If
+        xWorkBook = xExcel.Workbooks.Open(xPath)
+        Ws = xWorkBook.Sheets(1)
+        Ws.Activate()
+        LineZ = 2
+        Dim ReportYear As Int16 = ComboBox2.Text
 
+        For i As Int16 = 1 To 12 Step 1
+            If i < 10 Then
+                Ws.Cells(1, 1 + 3 * i) = ReportYear & "0" & i
+            Else
+                Ws.Cells(1, 1 + 3 * i) = ReportYear & i
+            End If
+            Dim D1 As Date = Convert.ToDateTime(ReportYear & "/" & i & "/01")
+            Dim D2 As Date = D1.AddMonths(1).AddDays(-1)
+            mSQLS1.CommandText = "SELECT isnull(t1,0) FROM IED12 WHERE Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            Dim X1 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(3, 3 * i - 1) = X1
+            mSQLS1.CommandText = "SELECT isnull(t1,0) FROM IED12 WHERE Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X2 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(3, 3 * i) = X2
+
+            mSQLS1.CommandText = "Select isnull(sum(z1+z2+z3+z4+z5+z6+z7+z8+z9+z10+z11+z12+z13+z14),0) from IED12 where Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            Dim X4 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(5, 3 * i - 1) = X4
+
+            mSQLS1.CommandText = "Select isnull(sum(z1+z2+z3+z4+z5+z6+z7+z8+z9+z10+z11+z12+z13+z14),0) from IED12 where Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X5 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(5, 3 * i) = X5
+
+            mSQLS1.CommandText = "Select isnull(sum(z1+z2+z3+z4+z5+z6+z7+z8+z9+z10+z11+z12+z13+z14),0) from IED12 where Date1 between '" & D1.ToString("yyyy/MM/dd") & "' and '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X3 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(5, 1 + 3 * i) = X3
+
+            mSQLS1.CommandText = "SELECT isnull(t2,0) FROM IED12 WHERE Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            Dim X6 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(6, 3 * i - 1) = X6
+
+            mSQLS1.CommandText = "SELECT isnull(t2,0) FROM IED12 WHERE Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X7 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(6, 3 * i) = X7
+
+            mSQLS1.CommandText = "Select isnull(sum(t2),0) from IED12 where Date1 between '" & D1.ToString("yyyy/MM/dd") & "' and '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X8 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(6, 1 + 3 * i) = X8
+
+            mSQLS1.CommandText = "Select isnull(sum(j1+j2+j3+j4+j5+j6+j7+j8+j9+j10+j11+j12+j13+j14),0) from IED12 where Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            Dim X9 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(7, 3 * i - 1) = X9
+
+            mSQLS1.CommandText = "Select isnull(sum(j1+j2+j3+j4+j5+j6+j7+j8+j9+j10+j11+j12+j13+j14),0) from IED12 where Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X10 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(7, 3 * i) = X10
+
+            mSQLS1.CommandText = "Select isnull(sum(j1+j2+j3+j4+j5+j6+j7+j8+j9+j10+j11+j12+j13+j14),0) from IED12 where Date1 between '" & D1.ToString("yyyy/MM/dd") & "' and '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X11 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(7, 1 + 3 * i) = X11
+
+            mSQLS1.CommandText = "SELECT isnull(t3,0) FROM IED12 WHERE Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            Dim X12 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(8, 3 * i - 1) = X12
+
+            mSQLS1.CommandText = "SELECT isnull(t3,0) FROM IED12 WHERE Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X13 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(8, 3 * i) = X13
+
+            mSQLS1.CommandText = "Select isnull(sum(t3),0) from IED12 where Date1 between '" & D1.ToString("yyyy/MM/dd") & "' and '" & D2.ToString("yyyy/MM/dd") & "'"
+            Dim X14 As Decimal = mSQLS1.ExecuteScalar()
+            Ws.Cells(8, 1 + 3 * i) = X14
+
+            mSQLS1.CommandText = "Select s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14 from IED12 Where Date1 = '" & D1.ToString("yyyy/MM/dd") & "'"
+            mSQLReader = mSQLS1.ExecuteReader()
+            If mSQLReader.HasRows() Then
+                While mSQLReader.Read()
+                    For j As Int16 = 0 To mSQLReader.FieldCount - 1 Step 1
+                        Ws.Cells(10 + j, 3 * i - 1) = mSQLReader.Item(j)
+                    Next
+                End While
+            End If
+            mSQLReader.Close()
+
+            mSQLS1.CommandText = "Select s1,s2,s3,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14 from IED12 Where Date1 = '" & D2.ToString("yyyy/MM/dd") & "'"
+            mSQLReader = mSQLS1.ExecuteReader()
+            If mSQLReader.HasRows() Then
+                While mSQLReader.Read()
+                    For j As Int16 = 0 To mSQLReader.FieldCount - 1 Step 1
+                        Ws.Cells(10 + j, 3 * i) = mSQLReader.Item(j)
+                    Next
+                End While
+            End If
+            mSQLReader.Close()
+
+
+        Next
+
+       
+    End Sub
     Private Sub ProcessStep2()
         mSQLS1.CommandText = "Select weekno, StartTime, EndTime from IES7 Where Weekno between '" & StartWeek & "' AND '" & EndWeek & "' order by weekno"
         mSQLReader = mSQLS1.ExecuteReader()
@@ -1709,5 +1843,601 @@ Public Class Form172
             End While
         End If
         'oReader99.Close()
+    End Sub
+
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+        Form175.Show()
+        Form175.Focus()
+    End Sub
+
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        Form185.Show()
+        Form185.Focus()
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        Form187.Show()
+        Form187.Focus()
+    End Sub
+
+    Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click
+        If Me.BackgroundWorker5.IsBusy() Then
+            MsgBox("处理中，请等待")
+            Return
+        End If
+
+        Dim xPath As String = "C:\temp\IER3.1_Template.xlsx"
+        If Not My.Computer.FileSystem.FileExists(xPath) Then
+            MsgBox("NO SAMPLE FILE")
+            Return
+        End If
+        Label3.Text = "R3.1报表处理中"
+        BackgroundWorker5.RunWorkerAsync()
+    End Sub
+
+    Private Sub Button12_Click(sender As Object, e As EventArgs) Handles Button12.Click
+        If Me.BackgroundWorker6.IsBusy() Then
+            MsgBox("处理中，请等待")
+            Return
+        End If
+
+        Dim xPath As String = "C:\temp\IER5_Template.xlsx"
+        If Not My.Computer.FileSystem.FileExists(xPath) Then
+            MsgBox("NO SAMPLE FILE")
+            Return
+        End If
+        Label3.Text = "R5报表处理中"
+        BackgroundWorker6.RunWorkerAsync()
+    End Sub
+
+    Private Sub BackgroundWorker6_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles BackgroundWorker6.DoWork
+        ExportToExcelR5()
+    End Sub
+    Private Sub BackgroundWorker6_RunWorkCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BackgroundWorker6.RunWorkerCompleted
+        SaveExcelR5()
+    End Sub
+    Private Sub SaveExcelR5()
+        SaveFileDialog1.FileName = "生产资源需求预测表"
+        SaveFileDialog1.DefaultExt = ".xlsx"
+        Dim SON As DialogResult = SaveFileDialog1.ShowDialog()
+        If SON = DialogResult.OK Then
+            Dim SFN As String = SaveFileDialog1.FileName
+            Ws.SaveAs(SFN, XlFileFormat.xlOpenXMLWorkbook)
+        Else
+            MsgBox("没有储存文件", MsgBoxStyle.Critical)
+        End If
+        xWorkBook.Saved = True
+        xWorkBook.Close()
+        xExcel.Quit()
+        If mConnection.State = ConnectionState.Open Then
+            Try
+                mConnection.Close()
+            Catch ex As Exception
+                MsgBox(ex.Message())
+            End Try
+        End If
+        Label3.Text = "R5已存檔"
+        Label3.Refresh()
+    End Sub
+    Private Sub ExportToExcelR5()
+        xExcel = New Microsoft.Office.Interop.Excel.Application
+        Dim xPath As String = "C:\temp\IER5_Template.xlsx"
+        If Not My.Computer.FileSystem.FileExists(xPath) Then
+            MsgBox("NO SAMPLE FILE")
+            Return
+        End If
+        StartWeek = TextBox1.Text
+        EndWeek = TextBox2.Text
+        xWorkBook = xExcel.Workbooks.Open(xPath)
+        Dim Option1 As String = Me.ComboBox4.SelectedItem
+        Ws = xWorkBook.Sheets(1)
+        Ws.Activate()
+        LineZ = 2
+        '第一頁
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Cutting1 ,sum(Qty) as t1, IED0.StandardTime1,CycleTime    from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '裁纱Cutting' AND IED0.Catalog = '裁纱Cutting' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Cutting1, StandardTime1 , CycleTime "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Cutting1, 1, (IES6.Time1 + IES6.Time2), IES6.Time23  FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Cutting1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+                End While
+            End If
+        mSQLReader.Close()
+
+        ' 第二頁
+        Ws = xWorkBook.Sheets(2)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Layup1 ,sum(Qty) as t1, IED0.StandardTime1 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '预型Layup' AND IED0.Catalog = '预型Layup' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Layup1, StandardTime1 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Layup1, 1, Time3 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Layup1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第三頁
+        Ws = xWorkBook.Sheets(3)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Layup1 ,sum(Qty) as t1, IED0.StandardTime1 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = 'PCM Layup' AND IED0.Catalog = 'PCM Layup'  "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Layup1, StandardTime1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Layup1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第四頁
+        Ws = xWorkBook.Sheets(4)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Layup1 ,sum(Qty) as t1, IED0.StandardTime1 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '结构件预型Structure Layup' AND IED0.Catalog = '结构件预型Structure Layup'  "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Layup1, StandardTime1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Layup1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第五頁
+        Ws = xWorkBook.Sheets(5)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Molding1 ,sum(Qty) as t1, IED0.StandardTime1,IED0.StandardTime2, IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "IED0.Size,"
+        Else
+            mSQLS1.CommandText += "IED0.Weight,"
+        End If
+        mSQLS1.CommandText += "IED0.H1  , IED0.CycleTime from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '成型Molding' AND IED0.Catalog = '成型Molding' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Molding1, StandardTime1 , StandardTime2 , IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "Size,"
+        Else
+            mSQLS1.CommandText += "Weight,"
+        End If
+        mSQLS1.CommandText += "H1, CycleTime "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Molding1, 1, IES6.Time4, IES6.Time27,IES6.MNAME1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "IES6.Size1,"
+        Else
+            mSQLS1.CommandText += "IES6.Weight1,"
+        End If
+        mSQLS1.CommandText += "IES6.Cav1, IES6.Time26 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1 ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Molding1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("DEQ1")
+                If Option1 = "按平面尺寸计算" Then
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Size")
+                Else
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Weight")
+                End If
+                Ws.Cells(LineZ, 13) = mSQLReader.Item("H1")
+                Ws.Cells(LineZ, 14) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 15) = "=IF(K" & LineZ & "=""/"",0,E" & LineZ & "*F" & LineZ & "*L" & LineZ & "/M" & LineZ & "*N" & LineZ & ")/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第六頁
+        Ws = xWorkBook.Sheets(6)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Molding1 ,sum(Qty) as t1, IED0.StandardTime1,IED0.StandardTime2, IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "IED0.Size,"
+        Else
+            mSQLS1.CommandText += "IED0.Weight,"
+        End If
+        mSQLS1.CommandText += "IED0.H1  , IED0.CycleTime from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = 'PCM Molding' AND IED0.Catalog = 'PCM Molding' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Molding1, StandardTime1 , StandardTime2 , IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "Size,"
+        Else
+            mSQLS1.CommandText += "Weight,"
+        End If
+        mSQLS1.CommandText += "H1, CycleTime "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Molding1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("DEQ1")
+                If Option1 = "按平面尺寸计算" Then
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Size")
+                Else
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Weight")
+                End If
+                Ws.Cells(LineZ, 13) = mSQLReader.Item("H1")
+                Ws.Cells(LineZ, 14) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 15) = "=IF(K" & LineZ & "=""/"",0,E" & LineZ & "*F" & LineZ & "*L" & LineZ & "/M" & LineZ & "*N" & LineZ & ")/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+
+        ' 第七頁
+        Ws = xWorkBook.Sheets(7)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Molding1 ,sum(Qty) as t1, IED0.StandardTime1,IED0.StandardTime2, IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "IED0.Size,"
+        Else
+            mSQLS1.CommandText += "IED0.Weight,"
+        End If
+        mSQLS1.CommandText += "IED0.H1  , IED0.CycleTime from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '结构件成型Structure Molding' AND IED0.Catalog = '结构件成型Structure Molding' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Molding1, StandardTime1 , StandardTime2 , IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "Size,"
+        Else
+            mSQLS1.CommandText += "Weight,"
+        End If
+        mSQLS1.CommandText += "H1, CycleTime "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Molding1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("DEQ1")
+                If Option1 = "按平面尺寸计算" Then
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Size")
+                Else
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Weight")
+                End If
+                Ws.Cells(LineZ, 13) = mSQLReader.Item("H1")
+                Ws.Cells(LineZ, 14) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 15) = "=IF(K" & LineZ & "=""/"",0,E" & LineZ & "*F" & LineZ & "*L" & LineZ & "/M" & LineZ & "*N" & LineZ & ")/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第八頁
+        Ws = xWorkBook.Sheets(8)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Molding1 ,sum(Qty) as t1, IED0.StandardTime1,IED0.StandardTime2, IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "IED0.Size,"
+        Else
+            mSQLS1.CommandText += "IED0.Weight,"
+        End If
+        mSQLS1.CommandText += "IED0.H1  , IED0.CycleTime from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '乳胶芯材Latex Core' AND IED0.Catalog = '乳胶芯材Latex Core' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Molding1, StandardTime1 , StandardTime2 , IED0.DEQ1, "
+        If Option1 = "按平面尺寸计算" Then
+            mSQLS1.CommandText += "Size,"
+        Else
+            mSQLS1.CommandText += "Weight,"
+        End If
+        mSQLS1.CommandText += "H1, CycleTime "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Molding1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("DEQ1")
+                If Option1 = "按平面尺寸计算" Then
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Size")
+                Else
+                    Ws.Cells(LineZ, 12) = mSQLReader.Item("Weight")
+                End If
+                Ws.Cells(LineZ, 13) = mSQLReader.Item("H1")
+                Ws.Cells(LineZ, 14) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 15) = "=IF(K" & LineZ & "=""/"",0,E" & LineZ & "*F" & LineZ & "*L" & LineZ & "/M" & LineZ & "*N" & LineZ & ")/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第九頁
+        Ws = xWorkBook.Sheets(9)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, CNC1 ,sum(Qty) as t1, IED0.StandardTime1, IED0.StandardTime2, IED0.DEQ1 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = 'CNC' AND IED0.Catalog = 'CNC' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, CNC1, StandardTime1, StandardTime2, DEQ1 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.CNC1, 1, Time7, Time28, MNAME2 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("CNC1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("DEQ1")
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第十頁
+        Ws = xWorkBook.Sheets(10)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Glueing1 ,sum(Qty) as t1, IED0.StandardTime1, IED0.StandardTime2 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '胶合Gluing' AND IED0.Catalog = '胶合Gluing' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Glueing1, StandardTime1, StandardTime2 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Glueing1, 1, Time9, Time29 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Glueing1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第十一頁
+        Ws = xWorkBook.Sheets(11)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Sanding1 ,sum(Qty) as t1, IED10.TimeTotal, IED0.StandardTime2 "
+        mSQLS1.CommandText += "from IED1 LEFT JOIN IED2 ON IED1.PN = IED2.PN1  LEFT JOIN IQMES3.dbo.model_paravalue m1 on  m1.parameter = 'ERP PN' AND m1.value = IED1.PN "
+        mSQLS1.CommandText += "left join IED10 ON m1.model = IED10.ModelID LEFT JOIN IED0 ON IED1.PN =IED0.PN where weekno between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' and IED2.Catalog = '补土Sanding1' and len(PNB) = 15 "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Sanding1 , TimeTotal, StandardTime2 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Sanding1, 1, (Time11 + Time12 + Time13 + Time14) , Time30 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Sanding1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("TimeTotal")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+                End While
+            End If
+        mSQLReader.Close()
+
+        ' 第十二頁
+        Ws = xWorkBook.Sheets(12)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Painting1 ,sum(Qty) as t1, IED0.PaintTime1, IED0.StandardTime2, IED0.CycleTime from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '涂装Painting4' AND IED0.Catalog = '涂装Painting4' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Painting1, PaintTime1, StandardTime2, CycleTime "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Painting1, 1, (Time15 + Time16 + Time17 + Time18), Time31, Time22 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Painting1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("PaintTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                Ws.Cells(LineZ, 11) = mSQLReader.Item("CycleTime")
+                Ws.Cells(LineZ, 12) = "=E" & LineZ & "*F" & LineZ & "*K" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第十三頁
+        Ws = xWorkBook.Sheets(13)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Polishing1 ,sum(Qty) as t1, IED11.StandardTime3, IED0.StandardTime2 "
+        mSQLS1.CommandText += "from IED1 LEFT JOIN IED2 ON IED1.PN = IED2.PN1  LEFT JOIN IQMES3.dbo.model_paravalue m1 on  m1.parameter = 'ERP PN' AND m1.value = IED1.PN "
+        mSQLS1.CommandText += "left join IED11 ON m1.model = IED11.ModelID LEFT JOIN IED0 ON IED1.PN =IED0.PN where weekno between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' and IED2.Catalog = '抛光Polishing' and len(PNB) = 15 "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Polishing1 , IED11.StandardTime3  , IED0.StandardTime2 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Polishing1, 1, (Time19 + Time21) , Time32 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Polishing1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime3")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
+
+        ' 第十四頁
+        Ws = xWorkBook.Sheets(14)
+        Ws.Activate()
+        LineZ = 2
+        mSQLS1.CommandText = "Select Weekno, IED1.PN, PNB, Package1 ,sum(Qty) as t1, IED0.StandardTime1, IED0.StandardTime2 from IED1,IED2,IED0 "
+        mSQLS1.CommandText += "where weekno between '" & StartWeek & "' and '" & EndWeek & "' AND IED1.PN = IED2.PN1 AND IED2.PNB = IED0.PN  and IED2.Catalog = '包装Packing' AND IED0.Catalog = '包装Packing' "
+        mSQLS1.CommandText += "Group by Weekno, IED1.PN,PNB, Package1, StandardTime1, StandardTime2 "
+        mSQLS1.CommandText += "union all "
+        mSQLS1.CommandText += "Select WeekNo , IEC1.PN,'',IED1.Package1, 1, Time9, Time29 FROM IEC1 LEFT JOIN IES6 ON IEC1.PN = IES6.PN  LEFT JOIN IED1    ON IEC1.PN = IED1.PN AND IED1.WeekNo between '"
+        mSQLS1.CommandText += StartWeek & "' and '" & EndWeek & "' WHERE BomStatus IS NULL OR BomStatus <> 2 AND TempIETime = 1 "
+
+        mSQLReader = mSQLS1.ExecuteReader()
+        If mSQLReader.HasRows() Then
+            Dim XXA As Int16 = 1
+            While mSQLReader.Read()
+                Ws.Cells(LineZ, 1) = XXA
+                Ws.Cells(LineZ, 2) = mSQLReader.Item("Weekno")
+                Ws.Cells(LineZ, 3) = mSQLReader.Item("PN")
+                Ws.Cells(LineZ, 4) = mSQLReader.Item("PNB")
+                Ws.Cells(LineZ, 5) = mSQLReader.Item("Package1")
+                Ws.Cells(LineZ, 6) = mSQLReader.Item("t1")
+                Ws.Cells(LineZ, 7) = mSQLReader.Item("StandardTime1")
+                Ws.Cells(LineZ, 8) = "=E" & LineZ & "*F" & LineZ & "*G" & LineZ & "/60"
+                Ws.Cells(LineZ, 9) = mSQLReader.Item("StandardTime2")
+                Ws.Cells(LineZ, 10) = "=E" & LineZ & "*F" & LineZ & "*I" & LineZ & "/60"
+                XXA += 1
+                LineZ += 1
+            End While
+        End If
+        mSQLReader.Close()
     End Sub
 End Class

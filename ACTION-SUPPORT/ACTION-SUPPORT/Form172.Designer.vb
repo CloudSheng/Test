@@ -24,6 +24,9 @@ Partial Class Form172
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form172))
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Button10 = New System.Windows.Forms.Button()
+        Me.Button9 = New System.Windows.Forms.Button()
+        Me.Button8 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
@@ -54,6 +57,12 @@ Partial Class Form172
         Me.CheckedListBox1 = New System.Windows.Forms.CheckedListBox()
         Me.Button7 = New System.Windows.Forms.Button()
         Me.BackgroundWorker4 = New System.ComponentModel.BackgroundWorker()
+        Me.Button11 = New System.Windows.Forms.Button()
+        Me.BackgroundWorker5 = New System.ComponentModel.BackgroundWorker()
+        Me.Button12 = New System.Windows.Forms.Button()
+        Me.BackgroundWorker6 = New System.ComponentModel.BackgroundWorker()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.ComboBox4 = New System.Windows.Forms.ComboBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
@@ -63,6 +72,9 @@ Partial Class Form172
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.Button10)
+        Me.GroupBox1.Controls.Add(Me.Button9)
+        Me.GroupBox1.Controls.Add(Me.Button8)
         Me.GroupBox1.Controls.Add(Me.Button2)
         Me.GroupBox1.Controls.Add(Me.Button1)
         Me.GroupBox1.Location = New System.Drawing.Point(13, 24)
@@ -72,20 +84,47 @@ Partial Class Form172
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "基础设定"
         '
+        'Button10
+        '
+        Me.Button10.Location = New System.Drawing.Point(19, 187)
+        Me.Button10.Name = "Button10"
+        Me.Button10.Size = New System.Drawing.Size(201, 45)
+        Me.Button10.TabIndex = 4
+        Me.Button10.Text = "S4_导入涂装，检验工时及周期时间"
+        Me.Button10.UseVisualStyleBackColor = True
+        '
+        'Button9
+        '
+        Me.Button9.Location = New System.Drawing.Point(19, 252)
+        Me.Button9.Name = "Button9"
+        Me.Button9.Size = New System.Drawing.Size(201, 45)
+        Me.Button9.TabIndex = 3
+        Me.Button9.Text = "S5_导入标准生产设备及模具参数"
+        Me.Button9.UseVisualStyleBackColor = True
+        '
+        'Button8
+        '
+        Me.Button8.Location = New System.Drawing.Point(19, 320)
+        Me.Button8.Name = "Button8"
+        Me.Button8.Size = New System.Drawing.Size(201, 45)
+        Me.Button8.TabIndex = 2
+        Me.Button8.Text = "S6_更新产品工时表"
+        Me.Button8.UseVisualStyleBackColor = True
+        '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(25, 446)
+        Me.Button2.Location = New System.Drawing.Point(19, 391)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(182, 45)
+        Me.Button2.Size = New System.Drawing.Size(201, 45)
         Me.Button2.TabIndex = 1
         Me.Button2.Text = "S7_节假日设置"
         Me.Button2.UseVisualStyleBackColor = True
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(25, 34)
+        Me.Button1.Location = New System.Drawing.Point(19, 38)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(182, 45)
+        Me.Button1.Size = New System.Drawing.Size(201, 45)
         Me.Button1.TabIndex = 0
         Me.Button1.Text = "S1_工段基本设置"
         Me.Button1.UseVisualStyleBackColor = True
@@ -97,7 +136,7 @@ Partial Class Form172
         Me.GroupBox2.Controls.Add(Me.Label2)
         Me.GroupBox2.Controls.Add(Me.Label1)
         Me.GroupBox2.Controls.Add(Me.ComboBox1)
-        Me.GroupBox2.Location = New System.Drawing.Point(262, 245)
+        Me.GroupBox2.Location = New System.Drawing.Point(262, 244)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(359, 108)
         Me.GroupBox2.TabIndex = 1
@@ -180,13 +219,15 @@ Partial Class Form172
         '
         'GroupBox3
         '
+        Me.GroupBox3.Controls.Add(Me.ComboBox4)
+        Me.GroupBox3.Controls.Add(Me.Label8)
         Me.GroupBox3.Controls.Add(Me.ComboBox3)
         Me.GroupBox3.Controls.Add(Me.ComboBox2)
         Me.GroupBox3.Controls.Add(Me.Label5)
         Me.GroupBox3.Controls.Add(Me.Label4)
-        Me.GroupBox3.Location = New System.Drawing.Point(262, 559)
+        Me.GroupBox3.Location = New System.Drawing.Point(262, 542)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(359, 108)
+        Me.GroupBox3.Size = New System.Drawing.Size(359, 125)
         Me.GroupBox3.TabIndex = 5
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "P5_选择其他参数段"
@@ -196,7 +237,7 @@ Partial Class Form172
         Me.ComboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ComboBox3.FormattingEnabled = True
         Me.ComboBox3.Items.AddRange(New Object() {"3", "4", "5", "6", "7", "8", "9", "10", "11", "12"})
-        Me.ComboBox3.Location = New System.Drawing.Point(189, 61)
+        Me.ComboBox3.Location = New System.Drawing.Point(189, 58)
         Me.ComboBox3.Name = "ComboBox3"
         Me.ComboBox3.Size = New System.Drawing.Size(121, 20)
         Me.ComboBox3.TabIndex = 3
@@ -214,7 +255,7 @@ Partial Class Form172
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(25, 65)
+        Me.Label5.Location = New System.Drawing.Point(27, 61)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(125, 12)
         Me.Label5.TabIndex = 1
@@ -243,7 +284,7 @@ Partial Class Form172
         '
         'Button6
         '
-        Me.Button6.Location = New System.Drawing.Point(1226, 480)
+        Me.Button6.Location = New System.Drawing.Point(1226, 464)
         Me.Button6.Name = "Button6"
         Me.Button6.Size = New System.Drawing.Size(167, 35)
         Me.Button6.TabIndex = 7
@@ -259,10 +300,10 @@ Partial Class Form172
         Me.GroupBox4.Controls.Add(Me.Label6)
         Me.GroupBox4.Controls.Add(Me.CheckBox1)
         Me.GroupBox4.Controls.Add(Me.GroupBox5)
-        Me.GroupBox4.Location = New System.Drawing.Point(262, 375)
-        Me.GroupBox4.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox4.Location = New System.Drawing.Point(262, 359)
+        Me.GroupBox4.Margin = New System.Windows.Forms.Padding(2)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox4.Padding = New System.Windows.Forms.Padding(2)
         Me.GroupBox4.Size = New System.Drawing.Size(359, 178)
         Me.GroupBox4.TabIndex = 8
         Me.GroupBox4.TabStop = False
@@ -292,7 +333,7 @@ Partial Class Form172
         '
         Me.CheckBox1.AutoSize = True
         Me.CheckBox1.Location = New System.Drawing.Point(18, 134)
-        Me.CheckBox1.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.CheckBox1.Margin = New System.Windows.Forms.Padding(2)
         Me.CheckBox1.Name = "CheckBox1"
         Me.CheckBox1.Size = New System.Drawing.Size(126, 16)
         Me.CheckBox1.TabIndex = 1
@@ -303,9 +344,9 @@ Partial Class Form172
         '
         Me.GroupBox5.Controls.Add(Me.CheckedListBox1)
         Me.GroupBox5.Location = New System.Drawing.Point(14, 20)
-        Me.GroupBox5.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox5.Margin = New System.Windows.Forms.Padding(2)
         Me.GroupBox5.Name = "GroupBox5"
-        Me.GroupBox5.Padding = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.GroupBox5.Padding = New System.Windows.Forms.Padding(2)
         Me.GroupBox5.Size = New System.Drawing.Size(331, 109)
         Me.GroupBox5.TabIndex = 0
         Me.GroupBox5.TabStop = False
@@ -318,7 +359,7 @@ Partial Class Form172
         Me.CheckedListBox1.FormattingEnabled = True
         Me.CheckedListBox1.Items.AddRange(New Object() {"Customer Calloff", "Customer Forecast", "Actual Shipment", "入库计划Production completion plan", "入库计划+forecast"})
         Me.CheckedListBox1.Location = New System.Drawing.Point(4, 20)
-        Me.CheckedListBox1.Margin = New System.Windows.Forms.Padding(2, 2, 2, 2)
+        Me.CheckedListBox1.Margin = New System.Windows.Forms.Padding(2)
         Me.CheckedListBox1.Name = "CheckedListBox1"
         Me.CheckedListBox1.Size = New System.Drawing.Size(312, 84)
         Me.CheckedListBox1.TabIndex = 0
@@ -332,12 +373,60 @@ Partial Class Form172
         Me.Button7.Text = "R1_订单需求预测表"
         Me.Button7.UseVisualStyleBackColor = True
         '
+        'BackgroundWorker4
+        '
+        '
+        'Button11
+        '
+        Me.Button11.Location = New System.Drawing.Point(1226, 416)
+        Me.Button11.Name = "Button11"
+        Me.Button11.Size = New System.Drawing.Size(167, 35)
+        Me.Button11.TabIndex = 10
+        Me.Button11.Text = "R3.1_月出勤工时统计表"
+        Me.Button11.UseVisualStyleBackColor = True
+        '
+        'BackgroundWorker5
+        '
+        '
+        'Button12
+        '
+        Me.Button12.Location = New System.Drawing.Point(1226, 533)
+        Me.Button12.Name = "Button12"
+        Me.Button12.Size = New System.Drawing.Size(167, 35)
+        Me.Button12.TabIndex = 11
+        Me.Button12.Text = "R5_生产资源需求预测表"
+        Me.Button12.UseVisualStyleBackColor = True
+        '
+        'BackgroundWorker6
+        '
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(27, 90)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(113, 12)
+        Me.Label8.TabIndex = 4
+        Me.Label8.Text = "压力容器负荷模式："
+        '
+        'ComboBox4
+        '
+        Me.ComboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.ComboBox4.FormattingEnabled = True
+        Me.ComboBox4.Items.AddRange(New Object() {"按平面尺寸计算", "按重量计算"})
+        Me.ComboBox4.Location = New System.Drawing.Point(189, 87)
+        Me.ComboBox4.Name = "ComboBox4"
+        Me.ComboBox4.Size = New System.Drawing.Size(121, 20)
+        Me.ComboBox4.TabIndex = 5
+        '
         'Form172
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1443, 718)
+        Me.Controls.Add(Me.Button12)
+        Me.Controls.Add(Me.Button11)
         Me.Controls.Add(Me.Button7)
         Me.Controls.Add(Me.GroupBox4)
         Me.Controls.Add(Me.Button6)
@@ -394,4 +483,13 @@ Partial Class Form172
     Friend WithEvents CheckedListBox1 As System.Windows.Forms.CheckedListBox
     Friend WithEvents Button7 As System.Windows.Forms.Button
     Friend WithEvents BackgroundWorker4 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents Button8 As System.Windows.Forms.Button
+    Friend WithEvents Button9 As System.Windows.Forms.Button
+    Friend WithEvents Button10 As System.Windows.Forms.Button
+    Friend WithEvents Button11 As System.Windows.Forms.Button
+    Friend WithEvents BackgroundWorker5 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents Button12 As System.Windows.Forms.Button
+    Friend WithEvents BackgroundWorker6 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents ComboBox4 As System.Windows.Forms.ComboBox
+    Friend WithEvents Label8 As System.Windows.Forms.Label
 End Class

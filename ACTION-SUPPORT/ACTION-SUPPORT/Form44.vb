@@ -86,7 +86,8 @@ Public Class Form44
         mSQLS1.CommandText += "(case when right(cf01,2) IS NULL and scrap_sn.updatedstation <> '9999' then 1 else 0 end) as t11 "
         mSQLS1.CommandText += "from scrap left join scrap_sn on scrap.sn = scrap_sn.sn left join lot on scrap.lot = lot.lot "
         mSQLS1.CommandText += "left join model_station_paravalue on model_station_paravalue.profilename = 'ERP' and model_station_paravalue.station = scrap_sn.updatedstation and model_station_paravalue.model = lot.model "
-        mSQLS1.CommandText += "left join defect on scrap.defect = defect.defect where scrap.defect not in ('DL02','DL01','DL03','DL04','DL12','DL13') and scrap.datetime between '"
+        'mSQLS1.CommandText += "left join defect on scrap.defect = defect.defect where scrap.defect not in ('DL02','DL01','DL03','DL04','DL12','DL13') and scrap.datetime between '"
+        mSQLS1.CommandText += "left join defect on scrap.defect = defect.defect where scrap.defect not in ('DJ01','DJ02','DL01','DL02','DL03','DL04','DL05', 'DL07','DL08', 'DL09', 'DL12', 'DL13') and scrap.datetime between '"
         mSQLS1.CommandText += TimeS1.ToString("yyyy/MM/dd HH:mm:ss") & "' AND '"
         mSQLS1.CommandText += TimeS2.ToString("yyyy/MM/dd HH:mm:ss") & "') AS CC group by model,defect,desc_en,desc_th,cf01"
         mSQLReader = mSQLS1.ExecuteReader(CommandBehavior.CloseConnection)

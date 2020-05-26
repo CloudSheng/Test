@@ -622,11 +622,8 @@ D:\Users\brady.chen\桌面\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPOR
 D:\Users\brady.chen\桌面\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form193.resources
 D:\Users\brady.chen\桌面\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form194.resources
 D:\Users\brady.chen\桌面\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form370.resources
-D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\ACTION-SUPPORT.exe.config
-D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.exe
-D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.xml
-D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.pdb
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\action.ico
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\ACTION-SUPPORT.exe.config
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\ACTION-SUPPORT.exe.manifest
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\ACTION-SUPPORT.application
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\bin\Debug\ACTION-SUPPORT.exe
@@ -712,6 +709,7 @@ D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACT
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form172.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form173.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form174.resources
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form175.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form176.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form177.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form178.resources
@@ -722,7 +720,9 @@ D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACT
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form182.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form183.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form184.resources
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form185.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form186.resources
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form187.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form188.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form19.resources
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION_SUPPORT.Form191.resources
@@ -848,3 +848,6 @@ D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACT
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.TrustInfo.xml
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.exe.manifest
 D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.application
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.exe
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.xml
+D:\Users\Cloud.sheng\My Documents\Visual Studio 2013\Projects\ACTION-SUPPORT\ACTION-SUPPORT\ACTION-SUPPORT\obj\Debug\ACTION-SUPPORT.pdb
